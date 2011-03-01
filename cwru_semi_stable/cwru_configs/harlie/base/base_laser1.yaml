@@ -1,0 +1,4 @@
+port: /dev/sensors/ftdi_FTDDCCPY   
+baud: 500000
+frame_id: base_laser1_link
+resolution: 0.5

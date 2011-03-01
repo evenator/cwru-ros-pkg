@@ -1,0 +1,4 @@
+port: /dev/sensors/hokuyo_H1000492
+frame_id: hokuyo_laser_link
+min_ang: -2.0862
+max_ang: 2.0923

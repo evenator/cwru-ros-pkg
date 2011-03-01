@@ -1,0 +1,2 @@
+port: /dev/sensors/ftdi_A600e1pa
+frame_id: neato_laser_link
