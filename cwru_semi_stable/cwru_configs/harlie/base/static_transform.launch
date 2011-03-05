@@ -1,6 +1,6 @@
 <launch>
-	<node pkg="tf" type="static_transform_publisher" name="base_laser1_broadcaster" args="0.1016 0 0.5588 0 0 0 base_link base_laser1_link 100" />
+	<node pkg="tf" type="static_transform_publisher" name="base_laser1_broadcaster" args="0.1016 0 0.5588 0 0 0 base_link base_laser1_link 10" />
 	<node pkg="tf" type="static_transform_publisher" name="front_sonar_broadcaster" args="0.0381 0 0.7223 0 0 0 base_link front_sonar 100" />
-	<node pkg="tf" type="static_transform_publisher" name="hokuyo_laser_tf_broadcaster" args="-0.07 0 0.17 0.0261798 0 3.14159 base_laser1_link hokuyo_laser_link 100" />
-	<node pkg="tf" type="static_transform_publisher" name="neato_laser_tf_broadcaster" args="-0.04 0 0.26 3.11541 0 0 base_laser1_link neato_laser_link 100" />
+	<node pkg="tf" type="static_transform_publisher" name="hokuyo_laser_tf_broadcaster" args="-0.07 0 0.17 0.0261798 0 3.14159 base_laser1_link hokuyo_laser_link 10" />
+	<node pkg="tf" type="static_transform_publisher" name="neato_laser_tf_broadcaster" args="-0.04 0 0.26 3.11541 0 0 base_laser1_link neato_laser_link 10" />
 </launch>

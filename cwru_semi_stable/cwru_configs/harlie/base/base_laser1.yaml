@@ -1,4 +1,4 @@
-port: /dev/sensors/ftdi_FTDDCCPY   
+port: /dev/sensors/ftdi_FTDGL84N
 baud: 500000
 frame_id: base_laser1_link
 resolution: 0.5
