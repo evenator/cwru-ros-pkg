@@ -19,6 +19,10 @@
   <depend package="cv_bridge" />
   <depend package="geometry_msgs" />
   <depend package="image_proc" />
+  <depend package="pcl_ros" />
+  <depend package="pcl_visualization" />
+  <depend package="laser_geometry" />
+  <depend package="sensor_msgs" />
 
 </package>
 

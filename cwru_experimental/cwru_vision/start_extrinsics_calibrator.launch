@@ -1,0 +1,16 @@
+<launch>
+<node pkg="cwru_vision" type="extrinsics_calibrator" name="extrinsics_calibrator" output="screen">
+    <!-- remap from="image" to="camera/image_raw" /-->
+    <remap from="image" to="/front_camera/image_rect_color"/>
+    <remap from="scan" to="/base_laser1_scan" />
+</node>
+
+<node pkg="image_view" type="image_view" name="output_image_viewer" output="screen">
+    <remap from="image" to="output_image" />
+</node>
+
+<node pkg="image_view" type="image_view" name="input_image_viewer" output="screen">
+    <remap from="image" to="/front_camera/image_rect_color" />
+</node>
+
+</launch>
