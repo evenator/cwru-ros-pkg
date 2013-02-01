@@ -1,20 +1,21 @@
 <?xml version="1.0"?>
 <launch>
-
+    <arg name="real_robot" default="false"/>
+    <arg name="rviz" default="true"/>
 <!-- YOU NEED TO CHANGE  MYROBOT  NAME TO POINT TO YOUR PACKAGES -->
 
     <!-- Load robot model into Parameter Server -->
-    <param name="robot_description" command="$(find xacro)/xacro.py '$(find abby_description)/urdf/abby.xacro'" />
+    <param name="robot_description" command="$(find xacro)/xacro.py '$(find abby_description)/urdf/abby.xacro'" unless="$(arg real_robot)"/>
 
     <!-- Start Robot State Publisher (calculates joint frame transforms) -->
-    <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher" />
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher" unless="$(arg real_robot)"/>
 
     <!-- Start Joint State Publisher with joint control GUI -->
-    <param name="use_gui" value="true" />
-    <node pkg="joint_state_publisher" type="joint_state_publisher" name="joint_state_publisher"/>
+    <param name="use_gui" value="true" unless="$(arg real_robot)"/>
+    <node pkg="joint_state_publisher" type="joint_state_publisher" name="joint_state_publisher" unless="$(arg real_robot)"/>
 
     <!-- Start Rviz visualization tool using saved config file -->
-    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find abby_config)/config/abby.vcg" />
+    <node name="rviz" pkg="rviz" type="rviz" args="-d $(find abby_config)/config/abby.vcg" if="$(arg rviz)"/>
 
     <include file="$(find planning_environment)/launch/environment_server.launch">
         <arg name="use_monitor" value="true" />
