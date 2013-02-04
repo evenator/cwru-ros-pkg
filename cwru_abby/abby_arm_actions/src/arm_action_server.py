@@ -15,22 +15,25 @@ class AbbyArmAction(object):
   def __init__(self, name):
     self._action_name = name
     self._as = actionlib.SimpleActionServer(self._action_name, ArmActionAction, execute_cb=self.execute_cb)
-    self._as.start()
     self.stowArm = StowArm()
     self.storeObject = StoreObject()
+    self._as.start()
     
   def execute_cb(self, goal):
     # helper variables
     r = rospy.Rate(1)
     success = True
     
+    #This (and the underlying classes) should be rewritten to give feedback during the action
     if goal.command == goal.STOW_ARM:
         self.stowArm.runUntilSuccess()
     elif goal.command == goal.STORE_OBJECT:
         self.storeObject.storeObject()
+    elif goal.command == goal.GRAB_OBJECT:
+        self.goPosition(goal.position, goal.grasp_approach)
     else:
         rospy.logerror("Undefined behavior requested.")
-    
+    self._as.set_succeeded()
       
 if __name__ == '__main__':
   rospy.init_node('abby_arm_action')
