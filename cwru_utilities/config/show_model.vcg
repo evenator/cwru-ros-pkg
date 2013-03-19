@@ -1,0 +1,46 @@
+Background\ ColorB=0
+Background\ ColorG=0
+Background\ ColorR=0
+Camera\ Config=0.585398 4.1554 1.46576 0.169525 0.147555 0.297616
+Camera\ Type=rviz::OrbitViewController
+Fixed\ Frame=/base_link
+Property\ Grid\ Splitter=805,78
+Property\ Grid\ State=expanded=.Global Options,.Global Status,TF.Enabled,TF.Frames,TF.Frames./base_link,TF.Frames./link_1,TF.Frames./link_2,TF.Frames./link_3,TF.Frames./link_4,TF.Frames./link_5,TF.Frames./link_6;splitterratio=0.486388
+QMainWindow=000000ff00000000fd000000030000000000000239000003c5fc0200000001fb000000100044006900730070006c006100790073010000001d000003c5000000ee00ffffff0000000100000131000003c5fc0200000003fb0000001e0054006f006f006c002000500072006f0070006500720074006900650073010000001d000000f70000006700fffffffb0000000a00560069006500770073010000011a000001cb000000bb00fffffffb0000001200530065006c0065006300740069006f006e01000002eb000000f70000006700ffffff000000030000065f0000003efc0100000001fb0000000800540069006d006501000000000000065f000002bf00ffffff000002e9000003c500000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+RobotModel.Alpha=1
+RobotModel.Collision\ Enabled=1
+RobotModel.Enabled=1
+RobotModel.Robot\ Description=robot_description
+RobotModel.TF\ Prefix=
+RobotModel.Update\ Interval=0
+RobotModel.Visual\ Enabled=1
+TF.All\ Enabled=1
+TF.Enabled=1
+TF.Frame\ Timeout=15
+TF.Marker\ Scale=0.25
+TF.Show\ Arrows=1
+TF.Show\ Axes=1
+TF.Show\ Names=1
+TF.Update\ Interval=0
+Target\ Frame=<Fixed Frame>
+Tool\ 2D\ Nav\ GoalTopic=/move_base_simple/goal
+Tool\ 2D\ Pose\ EstimateTopic=initialpose
+[Display0]
+ClassName=rviz::RobotModelDisplay
+Name=RobotModel
+[Display1]
+ClassName=rviz::TFDisplay
+Name=TF
+[TF.Frames.]
+base_link.Enabled=1
+link_1.Enabled=1
+link_2.Enabled=1
+link_3.Enabled=1
+link_4.Enabled=1
+link_5.Enabled=1
+link_6.Enabled=1
+[Window]
+Height=1098
+Width=1647
+X=1648
+Y=-85
