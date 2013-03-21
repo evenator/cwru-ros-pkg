@@ -15,6 +15,7 @@
   <depend package="abby_gripper"/>
   <depend package="laser_geometry"/>
   <depend package="tabletop_object_detector"/>
+  <depend package="kinematics_msgs"/>
 </package>
 
 
