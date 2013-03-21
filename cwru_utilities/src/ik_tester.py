@@ -26,7 +26,7 @@ joint_limits = [
   [-1.575, 1.23],
   [-2.80, 2.80],
   [-2.10, 2.10],
-  [-6.985, 6.985],
+  [-3.142, 3.142],
 ]
 increment = .2
 tipLinkName = 'gripper_body'
@@ -82,7 +82,15 @@ def iterateOverRange(jointLimits, index, jointAngles):
     angle += increment
     if index == 5:
       print(jointAngles)
-    
+
+def testIK(jointLimits, numSamples):
+  for i in range(numSamples):
+    jointAngles = []
+    for j in range(len(jointLimits)):
+      jointAngles.append(random.uniform(jointLimits[j][0],jointLimits[j][1]))
+    print jointAngles
+    getIKFromJoints(jointAngles)
+
 if __name__ == "__main__":
   rospy.init_node('ik_tester')
   jointPub = rospy.Publisher('/infrequent_joint_states',JointState)
@@ -100,5 +108,6 @@ if __name__ == "__main__":
       continue
     else:
       break
-  iterateOverRange(joint_limits, 5, [0,0,0,0,0,0])
+  #iterateOverRange(joint_limits, 5, [0,0,0,0,0,0])
+  testIK(joint_limits, 5000)
   print "Success: {}; Failure: {}; Percentage: {}".format(successCount, failCount, 100.0*float(successCount)/float(successCount + failCount))
