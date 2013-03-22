@@ -10,7 +10,7 @@ from kinematics_msgs.msg import *
 from kinematics_msgs.srv import *
 from std_srvs.srv import Empty
 import tf
-
+import random
 #TODO: move these to params
 joint_names = [
   'joint1',
