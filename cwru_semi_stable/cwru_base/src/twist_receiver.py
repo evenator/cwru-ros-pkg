@@ -69,12 +69,13 @@ def twist_receiver(msg, params):
     push_casters = params[1]
     speed_limit = params[2]
     spin_speed_limit = params[3]
-    multiplier_z = 1 if rl_swap else -1
     multiplier_x = -1 if push_casters else 1
-    if abs(msg.angular.z) > spin_speed_limit:
-        msg.angular.z = math.copysign(spin_speed_limit, msg.angular.z)
-    if abs(msg.linear.x) > speed_limit:
+    multiplier_z = 1 if rl_swap else -1
+    multiplier_z = multiplier_z * .5
+    if abs(msg.linear.x * multiplier_x) > speed_limit:
         msg.linear.x = math.copysign(speed_limit, msg.linear.x)
+    if abs(msg.angular.z * multiplier_z) > spin_speed_limit:
+        msg.angular.z = math.copysign(spin_speed_limit, msg.angular.z)
     toCRIO.send_angular_rate_command(multiplier_z*msg.angular.z, multiplier_x*msg.linear.x)
 
 def handle_reboot_request(req):
