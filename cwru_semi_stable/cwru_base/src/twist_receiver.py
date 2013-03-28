@@ -73,7 +73,6 @@ def twist_receiver(msg, params):
     min_trans = 0.1
     multiplier_x = -1 if push_casters else 1
     multiplier_z = 1 if rl_swap else -1
-    multiplier_z = multiplier_z * .5
     x_vel = msg.linear.x * multiplier_x
     z_vel = msg.angular.z * multiplier_z
     #Speed limiting to handle planners breaking the rules (base_local_planner does this)
@@ -86,6 +85,7 @@ def twist_receiver(msg, params):
     if abs(x_vel) < min_trans and abs(z_vel) < min_spin:
         if abs(z_vel) > 0.01:
             z_vel = math.copysign(min_spin, z_vel)
+    z_vel = z_vel * 0.5 #For ABBY only. Don't know why, but her spins are doublespeed
     toCRIO.send_angular_rate_command(z_vel, x_vel)
 
 def handle_reboot_request(req):
