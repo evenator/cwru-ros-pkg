@@ -27,7 +27,7 @@ from geometry_msgs.msg import Quaternion
 from cwru_base.msg import Pose
 from math import pi
 
-odom_pub = rospy.Publisher('odom', Odometry)
+odom_pub = rospy.Publisher('/odom', Odometry)
 tf_br = tf.TransformBroadcaster()
 
 def changePoseCoordFrame(pose):
@@ -42,11 +42,11 @@ def handle_harlie_pose(msg, push_casters):
 	tf_br.sendTransform(translation = (pose.x, pose.y, 0), 
 			rotation = tuple(quaternion),
 			time = current_time,
-			child = 'base_link',
-			parent = 'odom')
+			child = '/base_link',
+			parent = '/odom')
 	odom_msg = Odometry()
 	odom_msg.header.stamp = current_time
-	odom_msg.header.frame_id = 'odom'
+	odom_msg.header.frame_id = '/odom'
 
 	odom_msg.pose.pose.position.x = pose.x
 	odom_msg.pose.pose.position.y = pose.y
@@ -57,7 +57,7 @@ def handle_harlie_pose(msg, push_casters):
 	odom_msg.pose.covariance[7] = pose.y_var
 	odom_msg.pose.covariance[35] = pose.theta_var
 
-	odom_msg.child_frame_id = 'base_link'
+	odom_msg.child_frame_id = '/base_link'
 	odom_msg.twist.twist.linear.x = pose.vel
 	odom_msg.twist.twist.angular.z = pose.omega
 
@@ -69,5 +69,5 @@ def handle_harlie_pose(msg, push_casters):
 if __name__ == "__main__":
     rospy.init_node('harlie_odom_translator')
     push_casters = rospy.get_param("~push_casters")
-    rospy.Subscriber('pose', Pose, handle_harlie_pose, push_casters)
+    rospy.Subscriber('/pose', Pose, handle_harlie_pose, push_casters)
     rospy.spin()
