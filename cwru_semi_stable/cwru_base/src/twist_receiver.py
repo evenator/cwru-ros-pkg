@@ -69,14 +69,24 @@ def twist_receiver(msg, params):
     push_casters = params[1]
     speed_limit = params[2]
     spin_speed_limit = params[3]
+    min_spin = 0.7
+    min_trans = 0.1
     multiplier_x = -1 if push_casters else 1
     multiplier_z = 1 if rl_swap else -1
-    multiplier_z = multiplier_z * .5
-    if abs(msg.linear.x * multiplier_x) > speed_limit:
-        msg.linear.x = math.copysign(speed_limit, msg.linear.x)
-    if abs(msg.angular.z * multiplier_z) > spin_speed_limit:
-        msg.angular.z = math.copysign(spin_speed_limit, msg.angular.z)
-    toCRIO.send_angular_rate_command(multiplier_z*msg.angular.z, multiplier_x*msg.linear.x)
+    x_vel = msg.linear.x * multiplier_x
+    z_vel = msg.angular.z * multiplier_z
+    #Speed limiting to handle planners breaking the rules (base_local_planner does this)
+    if abs(x_vel) > speed_limit:
+        x_vel = math.copysign(speed_limit, x_vel)
+    if abs(z_vel) > spin_speed_limit:
+        z_vel = math.copysign(spin_speed_limit, z_vel)
+    #For when base_local_planner tries to spin in place more slowly than the robot can
+    #(Base_local_planner breaks its own rules on this)
+    if abs(x_vel) < min_trans and abs(z_vel) < min_spin:
+        if abs(z_vel) > 0.01:
+            z_vel = math.copysign(min_spin, z_vel)
+    z_vel = z_vel * 0.5 #For ABBY only. Don't know why, but her spins are doublespeed
+    toCRIO.send_angular_rate_command(z_vel, x_vel)
 
 def handle_reboot_request(req):
     to_crio.send_reboot_command()
