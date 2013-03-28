@@ -69,7 +69,7 @@ def twist_receiver(msg, params):
     push_casters = params[1]
     speed_limit = params[2]
     spin_speed_limit = params[3]
-    min_spin = 0.4
+    min_spin = 0.7
     min_trans = 0.1
     multiplier_x = -1 if push_casters else 1
     multiplier_z = 1 if rl_swap else -1
