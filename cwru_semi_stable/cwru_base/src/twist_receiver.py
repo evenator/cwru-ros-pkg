@@ -85,7 +85,7 @@ def twist_receiver(msg, params):
     if abs(x_vel) < min_trans and abs(z_vel) < min_spin:
         if abs(z_vel) > 0.01:
             z_vel = math.copysign(min_spin, z_vel)
-            rospy.loginfo("(%f, %f)",z_vel, x_vel)
+            #rospy.loginfo("(%f, %f)",z_vel, x_vel)
     z_vel = z_vel * 0.5 #For ABBY only. Don't know why, but her spins are doublespeed
     
     toCRIO.send_angular_rate_command(z_vel, x_vel)
