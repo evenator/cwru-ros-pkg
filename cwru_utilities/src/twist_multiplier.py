@@ -39,41 +39,42 @@ import rospy
 from geometry_msgs.msg import Twist
 
 class TwistMultiplier:
-	
-	def twistCallback(self, twist_in):
-	"""Latches the input message for republishing"""
-		self._msg = twist_in
-		self._last_msg = rospy.Time.now()
-		self._pub.publish(self._msg)
-	
-	def run(self):
-	"""Runs the publisher at the rate specified. If the time is the last message 
-		longer than 1/inRate, will not publish"""
-		rateTimer = rospy.Rate(self._outRate):
-		while not rospy.is_shutdown():
-			period = (rospy.Time.now() - self._last_msg).to_sec()
-			if period > self._inPeriod:
-				rospy.logdebug("Twist multipler input slower than minimum. Messages coming at %f Hz", period)
-			else:
-				self._pub.publish(self._msg)
-			rateTimer.sleep()
-	
-	def __init__(self, inRate, outRate):
-	"""Sets up a twist repeater that outputs at a frequency higher than the input
-		inRate is the minimum input frequency
-		outRate is the minimum output frequency"""
-		self.nh = rospy.init_node('twist_frequency_multiplier')
-		if inRate <= 0.0:
-			rospy.signal_shutdown("Input rate must be positive")
-		if outRate <= 0.0:
-			rospy.signal_shutdown("Output rate must be positive")
-			
-		self._inPeriod = 1.0/inRate
-		self._outRate = outRate
-		self._last_msg = rospy.Time.now()
-		
-		self._pub = rospy.Publisher("/twist_out", Twist)
-		self._sub = rospy.Subscriber("/twist_in", Twist, self.twistCallback)
+    
+    def twistCallback(self, twist_in):
+    """Latches the input message for republishing"""
+        self._msg = twist_in
+        self._last_msg = rospy.Time.now()
+        self._pub.publish(self._msg)
+    
+    def run(self):
+    """Runs the publisher at the rate specified. If the time is the last message 
+        longer than 1/inRate, will not publish"""
+        rateTimer = rospy.Rate(self._outRate):
+        while not rospy.is_shutdown():
+            period = (rospy.Time.now() - self._last_msg).to_sec()
+            if period > self._inPeriod:
+                rospy.logdebug("Twist multipler input slower than minimum. Messages coming at %f Hz", period)
+            elif self._msg != None:
+                self._pub.publish(self._msg)
+            rateTimer.sleep()
+    
+    def __init__(self, inRate, outRate):
+    """Sets up a twist repeater that outputs at a frequency higher than the input
+        inRate is the minimum input frequency
+        outRate is the minimum output frequency"""
+        self.nh = rospy.init_node('twist_frequency_multiplier')
+        if inRate <= 0.0:
+            rospy.signal_shutdown("Input rate must be positive")
+        if outRate <= 0.0:
+            rospy.signal_shutdown("Output rate must be positive")
+        
+        self._msg = None
+        self._inPeriod = 1.0/inRate
+        self._outRate = outRate
+        self._last_msg = rospy.Time.now()
+        
+        self._pub = rospy.Publisher("/twist_out", Twist)
+        self._sub = rospy.Subscriber("/twist_in", Twist, self.twistCallback)
 
 if __name__ == "__main__":
     inRate = rospy.get_param("~in_rate", 1.0)
