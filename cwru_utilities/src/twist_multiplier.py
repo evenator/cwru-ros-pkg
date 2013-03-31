@@ -41,15 +41,15 @@ from geometry_msgs.msg import Twist
 class TwistMultiplier:
     
     def twistCallback(self, twist_in):
-    """Latches the input message for republishing"""
+        """Latches the input message for republishing"""
         self._msg = twist_in
         self._last_msg = rospy.Time.now()
         self._pub.publish(self._msg)
     
     def run(self):
-    """Runs the publisher at the rate specified. If the time is the last message 
+        """Runs the publisher at the rate specified. If the time is the last message 
         longer than 1/inRate, will not publish"""
-        rateTimer = rospy.Rate(self._outRate):
+        rateTimer = rospy.Rate(self._outRate)
         while not rospy.is_shutdown():
             period = (rospy.Time.now() - self._last_msg).to_sec()
             if period > self._inPeriod:
@@ -59,10 +59,9 @@ class TwistMultiplier:
             rateTimer.sleep()
     
     def __init__(self, inRate, outRate):
-    """Sets up a twist repeater that outputs at a frequency higher than the input
+        """Sets up a twist repeater that outputs at a frequency higher than the input
         inRate is the minimum input frequency
         outRate is the minimum output frequency"""
-        self.nh = rospy.init_node('twist_frequency_multiplier')
         if inRate <= 0.0:
             rospy.signal_shutdown("Input rate must be positive")
         if outRate <= 0.0:
@@ -75,8 +74,10 @@ class TwistMultiplier:
         
         self._pub = rospy.Publisher("/twist_out", Twist)
         self._sub = rospy.Subscriber("/twist_in", Twist, self.twistCallback)
+        rospy.loginfo("Twist multiplier started with input timeout %f secs and output rate %f Hz",self._inPeriod, self._outRate)
 
 if __name__ == "__main__":
+    rospy.init_node('twist_frequency_multiplier')
     inRate = rospy.get_param("~in_rate", 1.0)
     outRate = rospy.get_param("~out_rate", 1.0)
     multiplierNode = TwistMultiplier(inRate, outRate)
