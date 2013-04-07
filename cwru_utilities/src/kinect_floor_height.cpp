@@ -31,7 +31,13 @@ typedef pcl::PointCloud<pcl::PointXYZ> PointCloud;
   boost::shared_ptr< pcl::PointCloud<pcl::PointXYZ> > laser_cloud_ptr;
   
   void floor_pcl_callback(const sensor_msgs::PointCloud2ConstPtr& msg){
-	ROS_DEBUG("Got a point cloud message with %d points", msg->height * msg->row_step);
+	ROS_INFO("Got a point cloud message with %d points", msg->height * msg->row_step);
+  try{
+    tf_listener_ptr->waitForTransform("/camera_rgb_optical_frame","/base_link", ros::Time(0),ros::Duration(20.0) );
+  }
+  catch (tf::TransformException ex){
+    ROS_WARN("%s", ex.what());
+  }
     
     //Transform point cloud into the world (/base_link frame)
     pcl::fromROSMsg (*msg, cloud_in);
@@ -110,7 +116,13 @@ typedef pcl::PointCloud<pcl::PointXYZ> PointCloud;
   }
 
   void wall_pcl_callback(const sensor_msgs::PointCloud2ConstPtr& msg){
-	ROS_DEBUG("Got a point cloud message");
+	ROS_INFO("Got a point cloud message with %d points", msg->height * msg->row_step);
+  try{
+    tf_listener_ptr->waitForTransform("/camera_rgb_optical_frame","/base_link", ros::Time(0),ros::Duration(20.0) );
+  }
+  catch (tf::TransformException ex){
+    ROS_WARN("%s", ex.what());
+  }
     
     //Transform point cloud into the world (/base_link frame)
     pcl::fromROSMsg (*msg, cloud_in);
@@ -148,14 +160,15 @@ int main(int argc, char** argv)
   tf_br_ptr = boost::shared_ptr<tf::TransformBroadcaster>(new tf::TransformBroadcaster());
   tf_listener_ptr = boost::shared_ptr<tf::TransformListener>(new tf::TransformListener());
   try{
-    tf_listener_ptr->waitForTransform("/camera_rgb_frame","/base_link", ros::Time(0),ros::Duration(10.0) );
+    tf_listener_ptr->waitForTransform("/camera_rgb_optical_frame","/base_link", ros::Time(0),ros::Duration(20.0) );
   }
   catch (tf::TransformException ex){
-    ROS_ERROR("%s", ex.what());
+    ROS_WARN("%s", ex.what());
   }
   init_segmentation();
-  ros::Subscriber pcl_sub = nh.subscribe<sensor_msgs::PointCloud2>("/camera/depth_registered/points", 1, floor_pcl_callback); 
-  //ros::Subscriber pcl_sub = nh.subscribe<sensor_msgs::PointCloud2>("/camera/depth_registered/points", 1, wall_pcl_callback); 
-  //ros::Subscriber laser_sub = nh.subscribe<sensor_msgs::LaserScan>("/base_laser1_scan", 1, wall_laser_callback);
+  ros::Duration(2.0).sleep();
+  //ros::Subscriber pcl_sub = nh.subscribe<sensor_msgs::PointCloud2>("/camera/depth_registered/points", 1, floor_pcl_callback); 
+  ros::Subscriber pcl_sub = nh.subscribe<sensor_msgs::PointCloud2>("/camera/depth_registered/points", 1, wall_pcl_callback); 
+  ros::Subscriber laser_sub = nh.subscribe<sensor_msgs::LaserScan>("/base_laser1_scan", 1, wall_laser_callback);
   ros::spin();
 }
