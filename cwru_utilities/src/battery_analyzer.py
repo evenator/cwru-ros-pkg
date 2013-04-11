@@ -37,12 +37,23 @@ __author__ = "esv@case.edu (Edward Venator)"
 
 import roslib; roslib.load_manifest("cwru_utilities")
 import rospy
-import math
+
+#DT
 from geometry_msgs.msg import Twist
+
+#Battery Voltage
 from cwru_base.msg import PowerState
-from trajectory_msgs.msg import JointTrajectory
-from trajectory_msgs.msg import JointTrajectoryPoint
-from abby_gripper.srv import gripper
+
+#Arm
+from arm_navigation_msgs.msg import MoveArmAction
+from abby_arm_actions.stow_arm import StowArm
+from abby_arm_actions.store_object import StoreObject
+
+#Gripper
+from abby_gripper.srv import gripper, gripperRequest
+
+#Python
+import math
 import time
 from datetime import datetime
 import os
@@ -55,7 +66,7 @@ class BatteryAnalyzer:
        	    except Exception:
        	    	pass
        	    dateTime = datetime.now().strftime("%Y-%m-%d_%H%M%S")
-       	    self.file_handle = open(os.path.expanduser("~/cwru_battery_analyzer/"+dateTime+".csv"), "w")
+       	    self.file_handle = open(os.path.expanduser("~/cwru_battery_analyzer/"+dateTime+"_"+test+".csv"), "w")
             self.file_handle.write('Time,Battery Voltage,13.8v Rail Voltage,cRIO Voltage\n')
        	    self.file_output = True
         else:
@@ -76,24 +87,10 @@ class BatteryAnalyzer:
             self.behavior = self.exerciseDT
             rospy.on_shutdown(self.stopDT)
         elif test == "arm":
-            self.armPublisher = rospy.Publisher("command", JointTrajectory)
+            self.stowArm = StowArm()
+            self.storeObject = StoreObject()
+            self.flag = False
             self.gripperService = rospy.ServiceProxy('/abby_gripper/gripper', gripper)
-            self.gripperStatus = True
-            self.jointTrajectoryMsg = JointTrajectory()
-            self.jointTrajectoryMsg.joint_names= ["joint1","joint2","joint3","joint4","joint5","joint6"]
-            jointAngles = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0] #initial arm position in radians
-            jointRange = 2*.77777770 #radians
-            jointNum = 0 
-            for seq in range(0,10):
-                jointAngles[jointNum] = jointAngles[jointNum] + (jointRange/11)
-                jointTrajectoryPt = JointTrajectoryPoint()
-                jointTrajectoryPt.positions = copy.deepcopy(jointAngles)
-                self.jointTrajectoryMsg.points.append(jointTrajectoryPt)
-            for seq in range(10,0):
-                jointAngles[jointNum] = jointAngles[jointNum] + (jointRange/11)
-                jointTrajectoryPt = JointTrajectoryPoint()
-                jointTrajectoryPt.positions = copy.deepcopy(jointAngles)
-                self.jointTrajectoryMsg.points.append(jointTrajectoryPt)
             self.behavior = self.exerciseArm
         self.batteryListener = rospy.Subscriber("power_state", PowerState, self.batteryCallback)
     
@@ -117,10 +114,13 @@ class BatteryAnalyzer:
         self.commandPublisher.publish(self.twistMsg)
     
     def exerciseArm(self):
-        self.armPublisher.publish(self.jointTrajectoryMsg)
-        self.gripperService(int(self.gripperStatus))
-        self.gripperStatus = not self.gripperStatus
-        rospy.sleep(30)
+        if self.flag:
+            self.storeObject.sendUntilSuccess()
+            self.gripperService(gripperRequest.OPEN)
+        else:
+            self.stowArm.sendUntilSuccess()
+            self.gripperService(gripperRequest.CLOSE)
+        self.flag = not self.flag
     
     def run(self):
         while not rospy.is_shutdown():
@@ -142,5 +142,5 @@ class BatteryAnalyzer:
 
 if __name__ == '__main__':
     rospy.init_node('battery_analyzer')
-    analyzer = BatteryAnalyzer("drivetrain","file")
+    analyzer = BatteryAnalyzer("arm","file")
     analyzer.run()
